@@ -23,7 +23,7 @@ data "terraform_remote_state" "primary" {
   config = {
     organization = "fhc-dan"
     workspaces = {
-      name = "s3-replication-testing"
+      name = "htest"
     }
   }
 }

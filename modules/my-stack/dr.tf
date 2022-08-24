@@ -16,6 +16,10 @@ variable "primary_remote_state" {
   type = map(any)
 }
 
+variable "dr_event" {
+  default = false
+}
+
 # Only create role in DR context
 resource "aws_iam_role" "s3_replication" {
   count = var.dr_enabled ? 1 : 0

@@ -22,3 +22,13 @@ resource "aws_db_instance" "default" {
   parameter_group_name = "default.mysql5.7"
   skip_final_snapshot  = true
 }
+
+# resource "aws_kms_key" "backups" {
+#   description = "KMS key for AWS backups"
+#   deletion_window_in_days = 10
+# }
+
+# resource "aws_backup_vault" "main" {
+#   name = "main"
+#   kms_key_arn = aws_kms_key.backups.arn
+# }
