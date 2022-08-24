@@ -6,8 +6,8 @@ module "my_stack" {
   source = "./modules/my-stack"
 }
 
-# Net new: Capture all the outputs from the module instantiation above
-output "rep_test_outputs" {
+# Capture all the outputs from the module instantiation above
+output "my_stack_outputs" {
   value = module.my_stack
 }
 
@@ -22,8 +22,6 @@ resource "aws_db_instance" "default" {
   parameter_group_name = "default.mysql5.7"
   skip_final_snapshot  = true
 }
-
-
 
 # resource "aws_backup_plan" "main" {
 #   name = "MainBackupPlan"

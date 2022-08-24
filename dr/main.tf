@@ -50,7 +50,11 @@ resource "aws_kms_key" "backups" {
 
 resource "aws_backup_vault" "dr_region" {
   provider = aws.dr
-  
+
   name = "dr-region"
   kms_key_arn = aws_kms_key.backups.arn
+}
+
+output "aws_backup_vault" {
+  value = aws_backup_vault.dr_region
 }

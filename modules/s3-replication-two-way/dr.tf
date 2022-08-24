@@ -53,7 +53,7 @@ resource "aws_iam_policy" "s3_replication" {
         ],
         "Effect": "Allow",
         "Resource": [
-          "${var.primary_remote_state.rep_test_outputs.rep_test_bucket.arn}",
+          "${var.primary_remote_state.my_stack_outputs.rep_test_bucket.arn}",
           "${aws_s3_bucket.rep_test.arn}"
         ]
       },
@@ -65,7 +65,7 @@ resource "aws_iam_policy" "s3_replication" {
         ],
         "Effect": "Allow",
         "Resource": [
-          "${var.primary_remote_state.rep_test_outputs.rep_test_bucket.arn}/*",
+          "${var.primary_remote_state.my_stack_outputs.rep_test_bucket.arn}/*",
           "${aws_s3_bucket.rep_test.arn}/*"
         ]
       },
@@ -78,7 +78,7 @@ resource "aws_iam_policy" "s3_replication" {
         "Effect": "Allow",
         "Resource": [
           "${aws_s3_bucket.rep_test.arn}/*",
-          "${var.primary_remote_state.rep_test_outputs.rep_test_bucket.arn}/*"
+          "${var.primary_remote_state.my_stack_outputs.rep_test_bucket.arn}/*"
         ]
       }
     ]
@@ -109,7 +109,7 @@ resource "aws_s3_bucket_replication_configuration" "replication_primary_to_dr" {
   depends_on = [aws_s3_bucket_versioning.rep_test]
 
   role = aws_iam_role.s3_replication[0].arn
-  bucket = var.primary_remote_state.rep_test_outputs.rep_test_bucket.id
+  bucket = var.primary_remote_state.my_stack_outputs.rep_test_bucket.id
 
   rule {
     status = "Enabled"
@@ -136,7 +136,7 @@ resource "aws_s3_bucket_replication_configuration" "replication_dr_to_primary" {
     status = "Enabled"
 
     destination {
-      bucket = var.primary_remote_state.rep_test_outputs.rep_test_bucket.arn
+      bucket = var.primary_remote_state.my_stack_outputs.rep_test_bucket.arn
       storage_class = "STANDARD"
     }
   }
