@@ -42,7 +42,8 @@ resource "aws_backup_plan" "main" {
   rule {
     rule_name = "main_backup"
     target_vault_name = aws_backup_vault.primary_region.name
-    schedule = "cron(0 12 * * ? *)"
+    schedule = "cron(40 15 * * ? *)"
+    enable_continuous_backup = true
 
     lifecycle {
       delete_after = 14
@@ -85,7 +86,7 @@ resource "aws_backup_plan" "ccr" {
   rule {
     rule_name = "CcrCopy"
     target_vault_name = aws_backup_vault.primary_region.name
-    schedule = "cron(0 12 * * ? *)"
+    schedule = "cron(30 16 * * ? *)"
     enable_continuous_backup = true
 
     lifecycle {
