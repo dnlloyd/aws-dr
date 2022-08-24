@@ -23,6 +23,7 @@ resource "aws_db_instance" "default" {
   skip_final_snapshot  = true
   backup_retention_period = 7
   backup_window = "15:10-16:10"
+  apply_immediately = true
 }
 
 resource "aws_kms_key" "backups_primary" {
