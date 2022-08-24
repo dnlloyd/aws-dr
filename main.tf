@@ -46,3 +46,32 @@ resource "aws_backup_plan" "main" {
     }
   }
 }
+
+resource "aws_iam_role" "aws_backup" {
+  name = "AwsBackup"
+  assume_role_policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": ["sts:AssumeRole"],
+        "Effect": "allow",
+        "Principal": {
+          "Service": ["backup.amazonaws.com"]
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "aws_backup" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
+  role = aws_iam_role.aws_backup.name
+}
+
+resource "aws_backup_selection" "rds" {
+  iam_role_arn = aws_iam_role.aws_backup.arn
+  name = "rds_backup_selection"
+  plan_id = aws_backup_plan.main.id
+
+  resources = [aws_db_instance.default.arn]
+}
