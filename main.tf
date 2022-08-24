@@ -26,6 +26,17 @@ resource "aws_db_instance" "default" {
   apply_immediately = true
 }
 
+data "terraform_remote_state" "dr" {
+  backend = "remote"
+
+  config = {
+    organization = "fhc-dan"
+    workspaces = {
+      name = "htest-dr"
+    }
+  }
+}
+
 resource "aws_kms_key" "backups_primary" {
   description = "KMS key for AWS backups"
   deletion_window_in_days = 10
@@ -50,7 +61,7 @@ resource "aws_backup_plan" "main" {
     }
 
     copy_action {
-      destination_vault_arn = "arn:aws:backup:us-east-2:458891109543:backup-vault:dr-region"
+      destination_vault_arn = data.terraform_remote_state.dr.aws_backup_vault.arn
     }
   }
 }
@@ -82,23 +93,4 @@ resource "aws_backup_selection" "rds" {
   plan_id = aws_backup_plan.main.id
 
   resources = [aws_db_instance.default.arn]
-}
-
-resource "aws_backup_plan" "ccr" {
-  name = "Ccr"
-
-  rule {
-    rule_name = "CcrCopy"
-    target_vault_name = aws_backup_vault.primary_region.name
-    schedule = "cron(30 16 * * ? *)"
-    enable_continuous_backup = true
-
-    lifecycle {
-      delete_after = 14
-    }
-
-    copy_action {
-      destination_vault_arn = "arn:aws:backup:us-east-2:458891109543:backup-vault:dr-region"
-    }
-  }
 }
