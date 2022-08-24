@@ -42,7 +42,7 @@ resource "aws_backup_plan" "main" {
   rule {
     rule_name = "main_backup"
     target_vault_name = aws_backup_vault.primary_region.name
-    schedule = "cron(40 15 * * ? *)"
+    schedule = "cron(52 16 * * ? *)"
     enable_continuous_backup = true
 
     lifecycle {
