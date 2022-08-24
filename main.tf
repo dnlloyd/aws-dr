@@ -61,7 +61,7 @@ resource "aws_backup_plan" "main" {
     }
 
     copy_action {
-      destination_vault_arn = data.terraform_remote_state.dr.aws_backup_vault.arn
+      destination_vault_arn = data.terraform_remote_state.dr.outputs.aws_backup_vault.arn
     }
   }
 }
