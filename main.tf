@@ -48,6 +48,10 @@ resource "aws_backup_plan" "main" {
     lifecycle {
       delete_after = 14
     }
+
+    copy_action {
+      destination_vault_arn = "arn:aws:backup:us-east-2:458891109543:backup-vault:dr-region"
+    }
   }
 }
 
