@@ -21,6 +21,8 @@ resource "aws_db_instance" "default" {
   password             = "foobarbaz"
   parameter_group_name = "default.mysql5.7"
   skip_final_snapshot  = true
+  backup_retention_period = 7
+  backup_window = "15:10-16:10"
 }
 
 resource "aws_kms_key" "backups_primary" {
