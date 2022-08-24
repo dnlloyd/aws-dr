@@ -23,16 +23,26 @@ resource "aws_db_instance" "default" {
   skip_final_snapshot  = true
 }
 
-# resource "aws_backup_plan" "main" {
-#   name = "MainBackupPlan"
+resource "aws_kms_key" "backups_primary" {
+  description = "KMS key for AWS backups"
+  deletion_window_in_days = 10
+}
 
-#   rule {
-#     rule_name = "ccr"
-#     target_vault_name = aws_backup_vault.main.name
-#     schedule = "cron(0 12 * * ? *)"
+resource "aws_backup_vault" "primary_region" {
+  name = "primary-region"
+  kms_key_arn = aws_kms_key.backups.arn
+}
 
-#     lifecycle {
-#       delete_after = 14
-#     }
-#   }
-# }
+resource "aws_backup_plan" "main" {
+  name = "MainBackupPlan"
+
+  rule {
+    rule_name = "main_backup"
+    target_vault_name = aws_backup_vault.primary_region.name
+    schedule = "cron(0 12 * * ? *)"
+
+    lifecycle {
+      delete_after = 14
+    }
+  }
+}
