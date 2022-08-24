@@ -28,8 +28,8 @@ data "terraform_remote_state" "primary" {
   }
 }
 
-module "s3_rep_test_dr" {
-  source = "../modules/s3-replication-two-way"
+module "my_stack" {
+  source = "../modules/my-stack"
 
   providers = {
     aws = aws.dr
@@ -40,3 +40,4 @@ module "s3_rep_test_dr" {
   dr_event = local.dr_event
   primary_remote_state = data.terraform_remote_state.primary.outputs
 }
+
