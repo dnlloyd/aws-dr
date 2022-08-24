@@ -77,3 +77,22 @@ resource "aws_backup_selection" "rds" {
 
   resources = [aws_db_instance.default.arn]
 }
+
+resource "aws_backup_plan" "ccr" {
+  name = "Ccr"
+
+  rule {
+    rule_name = "CcrCopy"
+    target_vault_name = aws_backup_vault.primary_region.name
+    schedule = "cron(0 12 * * ? *)"
+    enable_continuous_backup = true
+
+    lifecycle {
+      delete_after = 14
+    }
+
+    copy_action {
+      destination_vault_arn = "arn:aws:backup:us-east-2:458891109543:backup-vault:dr-region"
+    }
+  }
+}
