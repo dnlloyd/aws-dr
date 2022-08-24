@@ -30,7 +30,7 @@ resource "aws_kms_key" "backups_primary" {
 
 resource "aws_backup_vault" "primary_region" {
   name = "primary-region"
-  kms_key_arn = aws_kms_key.backups.arn
+  kms_key_arn = aws_kms_key.backups_primary.arn
 }
 
 resource "aws_backup_plan" "main" {
