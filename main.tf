@@ -12,7 +12,7 @@ provider "aws" {
 # }
 
 resource "aws_s3_bucket" "es_snap" {
-  bucket_prefix = "es_snap"
+  bucket_prefix = "essnap"
 }
 
 resource "aws_s3_bucket_acl" "es_snap_bucket_acl" {

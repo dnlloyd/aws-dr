@@ -44,7 +44,7 @@ data "terraform_remote_state" "primary" {
 ####################################################################
 
 resource "aws_s3_bucket" "es_snap_dr" {
-  bucket_prefix = "es_snap_dr"
+  bucket_prefix = "essnapdr"
 }
 
 resource "aws_s3_bucket_acl" "es_snap_dr_bucket_acl" {
