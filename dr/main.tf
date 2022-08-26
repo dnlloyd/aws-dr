@@ -91,7 +91,7 @@ resource "aws_iam_policy" "s3_replication_es" {
         "Effect": "Allow",
         "Resource": [
           "${data.terraform_remote_state.primary.outputs.es_snap_bucket.arn}",
-          "${aws_s3_bucket.rep_test.arn}"
+          "${aws_s3_bucket.es_snap_dr.arn}"
         ]
       },
       {
@@ -103,7 +103,7 @@ resource "aws_iam_policy" "s3_replication_es" {
         "Effect": "Allow",
         "Resource": [
           "${data.terraform_remote_state.primary.outputs.es_snap_bucket.arn}/*",
-          "${aws_s3_bucket.rep_test.arn}/*"
+          "${aws_s3_bucket.es_snap_dr.arn}/*"
         ]
       },
       {
@@ -114,7 +114,7 @@ resource "aws_iam_policy" "s3_replication_es" {
         ],
         "Effect": "Allow",
         "Resource": [
-          "${aws_s3_bucket.rep_test.arn}/*",
+          "${aws_s3_bucket.es_snap_dr.arn}/*",
           "${data.terraform_remote_state.primary.outputs.es_snap_bucket.arn}/*"
         ]
       }
