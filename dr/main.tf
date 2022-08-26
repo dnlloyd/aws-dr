@@ -28,18 +28,18 @@ data "terraform_remote_state" "primary" {
   }
 }
 
-module "my_stack" {
-  source = "../modules/my-stack"
+# module "my_stack" {
+#   source = "../modules/my-stack"
 
-  providers = {
-    aws = aws.dr
-    aws.shared = aws.primary
-  }
+#   providers = {
+#     aws = aws.dr
+#     aws.shared = aws.primary
+#   }
 
-  dr_enabled = local.dr_enabled
-  dr_event = local.dr_event
-  primary_remote_state = data.terraform_remote_state.primary.outputs
-}
+#   dr_enabled = local.dr_enabled
+#   dr_event = local.dr_event
+#   primary_remote_state = data.terraform_remote_state.primary.outputs
+# }
 
 ####################################################################
 
