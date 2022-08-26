@@ -90,7 +90,7 @@ resource "aws_iam_policy" "s3_replication_es" {
         ],
         "Effect": "Allow",
         "Resource": [
-          "${data.terraform_remote_state.primary.es_snap_bucket.arn}",
+          "${data.terraform_remote_state.primary.outputs.es_snap_bucket.arn}",
           "${aws_s3_bucket.rep_test.arn}"
         ]
       },
@@ -102,7 +102,7 @@ resource "aws_iam_policy" "s3_replication_es" {
         ],
         "Effect": "Allow",
         "Resource": [
-          "${data.terraform_remote_state.primary.es_snap_bucket.arn}/*",
+          "${data.terraform_remote_state.primary.outputs.es_snap_bucket.arn}/*",
           "${aws_s3_bucket.rep_test.arn}/*"
         ]
       },
@@ -115,7 +115,7 @@ resource "aws_iam_policy" "s3_replication_es" {
         "Effect": "Allow",
         "Resource": [
           "${aws_s3_bucket.rep_test.arn}/*",
-          "${data.terraform_remote_state.primary.es_snap_bucket.arn}/*"
+          "${data.terraform_remote_state.primary.outputs.es_snap_bucket.arn}/*"
         ]
       }
     ]
@@ -140,7 +140,7 @@ resource "aws_s3_bucket_replication_configuration" "replication_primary_to_dr" {
   provider = aws.primary
 
   role = aws_iam_role.s3_replication_es.arn
-  bucket = data.terraform_remote_state.primary.es_snap_bucket.id
+  bucket = data.terraform_remote_state.primary.outputs.es_snap_bucket.id
 
   rule {
     status = "Enabled"
@@ -164,7 +164,7 @@ resource "aws_s3_bucket_replication_configuration" "replication_dr_to_primary" {
     status = "Enabled"
 
     destination {
-      bucket = data.terraform_remote_state.primary.es_snap_bucket.arn
+      bucket = data.terraform_remote_state.primary.outputs.es_snap_bucket.arn
       storage_class = "STANDARD"
     }
   }
