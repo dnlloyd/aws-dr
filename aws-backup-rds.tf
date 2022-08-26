@@ -47,9 +47,9 @@ resource "aws_backup_plan" "main" {
       delete_after = 14
     }
 
-    # copy_action {
-    #   destination_vault_arn = data.terraform_remote_state.dr.outputs.aws_backup_vault.arn
-    # }
+    copy_action {
+      destination_vault_arn = data.terraform_remote_state.dr.outputs.aws_backup_vault.arn
+    }
   }
 }
 

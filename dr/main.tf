@@ -40,3 +40,132 @@ module "my_stack" {
   dr_event = local.dr_event
   primary_remote_state = data.terraform_remote_state.primary.outputs
 }
+
+####################################################################
+
+resource "aws_s3_bucket" "es_snap_dr" {
+  bucket_prefix = "es_snap_dr"
+}
+
+resource "aws_s3_bucket_acl" "es_snap_dr_bucket_acl" {
+  bucket = aws_s3_bucket.es_snap_dr.id
+  acl = "private"
+}
+
+resource "aws_s3_bucket_versioning" "es_snap_dr" {
+  bucket = aws_s3_bucket.es_snap_dr.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_iam_role" "s3_replication_es" {
+  name = "S3ReplicationTestEs"
+
+  assume_role_policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": "sts:AssumeRole",
+        "Principal": {
+          "Service": "s3.amazonaws.com"
+        },
+        "Effect": "Allow",
+        "Sid": ""
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "s3_replication_es" {
+  name = "S3ReplicationTestEs"
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+          "s3:GetReplicationConfiguration",
+          "s3:ListBucket"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "${data.terraform_remote_state.primary.es_snap_bucket.arn}",
+          "${aws_s3_bucket.rep_test.arn}"
+        ]
+      },
+      {
+        "Action": [
+          "s3:GetObjectVersionForReplication",
+          "s3:GetObjectVersionAcl",
+          "s3:GetObjectVersionTagging"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "${data.terraform_remote_state.primary.es_snap_bucket.arn}/*",
+          "${aws_s3_bucket.rep_test.arn}/*"
+        ]
+      },
+      {
+        "Action": [
+          "s3:ReplicateObject",
+          "s3:ReplicateDelete",
+          "s3:ReplicateTags"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "${aws_s3_bucket.rep_test.arn}/*",
+          "${data.terraform_remote_state.primary.es_snap_bucket.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Only create attachment in DR context
+resource "aws_iam_role_policy_attachment" "replication_es" {
+  role = aws_iam_role.s3_replication_es.name
+  policy_arn = aws_iam_policy.s3_replication_es.arn
+}
+
+# In a DR context, the aws_s3_bucket_replication_configuration resource below uses the 
+# primary region provider. We need to get the DR region bucket resource for the 
+# destination
+locals {
+  es_snap_dr_bucket_arn = aws_s3_bucket.es_snap_dr.arn
+}
+
+# Replication from primary region to DR region
+resource "aws_s3_bucket_replication_configuration" "replication_primary_to_dr" {
+  provider = aws.primary
+
+  role = aws_iam_role.s3_replication_es.arn
+  bucket = data.terraform_remote_state.primary.es_snap_bucket.id
+
+  rule {
+    status = "Enabled"
+
+    destination {
+      bucket = local.es_snap_dr_bucket_arn
+      storage_class = "STANDARD"
+    }
+  }
+}
+
+# Replication from DR region to primary region
+resource "aws_s3_bucket_replication_configuration" "replication_dr_to_primary" {  
+  # Must have bucket versioning enabled first
+  depends_on = [aws_s3_bucket_versioning.es_snap_dr]
+
+  role = aws_iam_role.s3_replication_es.arn
+  bucket = aws_s3_bucket.es_snap_dr.id
+
+  rule {
+    status = "Enabled"
+
+    destination {
+      bucket = data.terraform_remote_state.primary.es_snap_bucket.arn
+      storage_class = "STANDARD"
+    }
+  }
+}

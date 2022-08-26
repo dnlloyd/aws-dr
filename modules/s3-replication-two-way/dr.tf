@@ -10,6 +10,10 @@ variable "dr_enabled" {
   default = false
 }
 
+variable "dr_event" {
+  default = false
+}
+
 # In the DR context, this variable contains a map of all the primary deployment's outputs
 variable "primary_remote_state" {
   default = null
