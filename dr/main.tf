@@ -151,6 +151,9 @@ locals {
 resource "aws_s3_bucket_replication_configuration" "replication_primary_to_dr" {
   provider = aws.primary
 
+  # Must have bucket versioning enabled first
+  depends_on = [aws_s3_bucket_versioning.es_snap_dr]
+
   role = aws_iam_role.s3_replication_es.arn
   bucket = data.terraform_remote_state.primary.outputs.es_snap_bucket.id
 
