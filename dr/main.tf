@@ -44,15 +44,21 @@ data "terraform_remote_state" "primary" {
 ####################################################################
 
 resource "aws_s3_bucket" "es_snap_dr" {
+  provider = aws.dr
+
   bucket_prefix = "essnapdr"
 }
 
 resource "aws_s3_bucket_acl" "es_snap_dr_bucket_acl" {
+  provider = aws.dr
+
   bucket = aws_s3_bucket.es_snap_dr.id
   acl = "private"
 }
 
 resource "aws_s3_bucket_versioning" "es_snap_dr" {
+  provider = aws.dr
+
   bucket = aws_s3_bucket.es_snap_dr.id
   versioning_configuration {
     status = "Enabled"
@@ -60,6 +66,8 @@ resource "aws_s3_bucket_versioning" "es_snap_dr" {
 }
 
 resource "aws_iam_role" "s3_replication_es" {
+  provider = aws.dr
+
   name = "S3ReplicationTestEs"
 
   assume_role_policy = jsonencode({
@@ -78,6 +86,8 @@ resource "aws_iam_role" "s3_replication_es" {
 }
 
 resource "aws_iam_policy" "s3_replication_es" {
+  provider = aws.dr
+
   name = "S3ReplicationTestEs"
 
   policy = jsonencode({
@@ -124,6 +134,8 @@ resource "aws_iam_policy" "s3_replication_es" {
 
 # Only create attachment in DR context
 resource "aws_iam_role_policy_attachment" "replication_es" {
+  provider = aws.dr
+
   role = aws_iam_role.s3_replication_es.name
   policy_arn = aws_iam_policy.s3_replication_es.arn
 }
@@ -154,6 +166,8 @@ resource "aws_s3_bucket_replication_configuration" "replication_primary_to_dr" {
 
 # Replication from DR region to primary region
 resource "aws_s3_bucket_replication_configuration" "replication_dr_to_primary" {  
+  provider = aws.dr
+
   # Must have bucket versioning enabled first
   depends_on = [aws_s3_bucket_versioning.es_snap_dr]
 
