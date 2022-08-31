@@ -22,6 +22,10 @@ locals {
 
 module "rds_with_backups" {
   source = "../modules/rds-with-backup"
+
+  providers = {
+    aws = aws.dr
+  }
 }
 
 # Capture all the outputs from the module instantiation above
