@@ -1,3 +1,5 @@
+data "aws_region" "current" {}
+
 resource "aws_db_instance" "default" {
   db_name = "test"
   allocated_storage    = 10
@@ -19,7 +21,7 @@ resource "aws_kms_key" "backups" {
 }
 
 resource "aws_backup_vault" "backups" {
-  name = "primary-region"
+  name = "rds-backups-${data.aws_region.current.name}"
   kms_key_arn = aws_kms_key.backups.arn
 }
 
