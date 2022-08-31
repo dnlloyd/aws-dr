@@ -37,7 +37,7 @@ resource "aws_backup_plan" "main" {
     }
 
     dynamic "copy_action" {
-      for_each = dr_enabled ? ["do-nothing"] : []
+      for_each = var.dr_enabled ? ["do-nothing"] : []
 
       content {
         destination_vault_arn = data.terraform_remote_state.dr.outputs.aws_backup_vault.arn
