@@ -40,7 +40,7 @@ resource "aws_backup_plan" "main" {
       for_each = var.dr_enabled ? ["do-nothing"] : []
 
       content {
-        destination_vault_arn = var.dr_remote_state.outputs.rds_with_backups_outputs.aws_backup_vault.backups.arn
+        destination_vault_arn = var.dr_remote_state.rds_with_backups_outputs.aws_backup_vault.backups.arn
       }
     }
 
