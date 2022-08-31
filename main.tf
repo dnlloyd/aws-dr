@@ -20,6 +20,7 @@ module "rds_with_backups" {
   source = "./modules/rds-with-backup"
 
   dr_remote_state = data.terraform_remote_state.dr.outputs
+  dr_enabled = true
 }
 
 #################################################################
