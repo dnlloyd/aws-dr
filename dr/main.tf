@@ -21,7 +21,7 @@ locals {
 # Module RDS with AWS Backup
 
 module "rds_with_backups" {
-  source = "./modules/rds-with-backup"
+  source = "../modules/rds-with-backup"
 }
 
 # Capture all the outputs from the module instantiation above
