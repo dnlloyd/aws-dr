@@ -20,3 +20,7 @@ variable "primary_remote_state" {
   type = map(any)
 }
 
+variable "dr_remote_state" {
+  default = null
+  type = map(any)
+}
