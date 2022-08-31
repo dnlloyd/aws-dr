@@ -20,7 +20,7 @@ locals {
 #################################################################
 # Module RDS with AWS Backup
 
-module "aws_backups" {
+module "rds_with_backups" {
   source = "./modules/aws-backup-rds"
 }
 
