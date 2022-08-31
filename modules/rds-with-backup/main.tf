@@ -13,48 +13,43 @@ resource "aws_db_instance" "default" {
   apply_immediately = true
 }
 
-data "terraform_remote_state" "dr" {
-  backend = "remote"
-
-  config = {
-    organization = "fhc-dan"
-    workspaces = {
-      name = "htest-dr"
-    }
-  }
-}
-
-resource "aws_kms_key" "backups_primary" {
+resource "aws_kms_key" "backups" {
   description = "KMS key for AWS backups"
   deletion_window_in_days = 10
 }
 
-resource "aws_backup_vault" "primary_region" {
+resource "aws_backup_vault" "backups" {
   name = "primary-region"
-  kms_key_arn = aws_kms_key.backups_primary.arn
+  kms_key_arn = aws_kms_key.backups.arn
 }
 
 resource "aws_backup_plan" "main" {
-  name = "MainBackupPlan"
+  name = "RdsBackupPlan"
 
   rule {
     rule_name = "main_backup"
-    target_vault_name = aws_backup_vault.primary_region.name
-    schedule = "cron(52 16 * * ? *)"
+    target_vault_name = aws_backup_vault.backups.name
+    schedule = "cron(30 21 * * ? *)"
     enable_continuous_backup = true
 
     lifecycle {
       delete_after = 14
     }
 
-    copy_action {
-      destination_vault_arn = data.terraform_remote_state.dr.outputs.aws_backup_vault.arn
+    dynamic "copy_action" {
+      for_each = dr_enabled ? ["do-nothing"] : []
+
+      content {
+        destination_vault_arn = data.terraform_remote_state.dr.outputs.aws_backup_vault.arn
+      }
     }
+
+    
   }
 }
 
 resource "aws_iam_role" "aws_backup" {
-  name = "AwsBackup"
+  name_prefix = "AwsBackup"
   assume_role_policy = jsonencode({
     "Version": "2012-10-17",
     "Statement": [
@@ -80,4 +75,8 @@ resource "aws_backup_selection" "rds" {
   plan_id = aws_backup_plan.main.id
 
   resources = [aws_db_instance.default.arn]
+}
+
+output "aws_backup_vault" {
+  value = aws_backup_vault.backups
 }
