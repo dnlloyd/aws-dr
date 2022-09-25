@@ -2,9 +2,6 @@ provider "aws" {
   region  = "us-east-1"
 }
 
-#################################################################
-# Module RDS with AWS Backup
-
 data "terraform_remote_state" "dr" {
   backend = "remote"
 
@@ -16,12 +13,26 @@ data "terraform_remote_state" "dr" {
   }
 }
 
-module "rds_with_backups" {
-  source = "./modules/rds-with-backup"
+#################################################################
+# Module Web: CloudFront and ALB
 
-  dr_remote_state = data.terraform_remote_state.dr.outputs
-  dr_enabled = false
+module "web" {
+  source = "./modules/web"
+
+  # dr_remote_state = data.terraform_remote_state.dr.outputs
+  # dr_enabled = false
+  # dr_cutover = false
 }
+
+#################################################################
+# Module RDS with AWS Backup
+
+# module "rds_with_backups" {
+#   source = "./modules/rds-with-backup"
+
+#   dr_remote_state = data.terraform_remote_state.dr.outputs
+#   dr_enabled = false
+# }
 
 #################################################################
 # Module stack

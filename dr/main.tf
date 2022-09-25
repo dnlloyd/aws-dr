@@ -8,44 +8,35 @@ provider "aws" {
   region  = "us-east-1"
 }
 
-locals {
-  elasticsearch_name = "test"
-  vpc_id = "vpc-065b33a8baa73e2a3"
-  subnets = ["subnet-0799f4a5fa38ae5f7", "subnet-07f0c07531ff40032", "subnet-00e8e661d1aa7a9db"]
+data "terraform_remote_state" "primary" {
+  backend = "remote"
 
-  dr_enabled = true
-  dr_event = true
+  config = {
+    organization = "fhc-dan"
+    workspaces = {
+      name = "htest"
+    }
+  }
 }
 
 #################################################################
 # Module RDS with AWS Backup
 
-module "rds_with_backups" {
-  source = "../modules/rds-with-backup"
+# module "rds_with_backups" {
+#   source = "../modules/rds-with-backup"
 
-  providers = {
-    aws = aws.dr
-  }
-}
+#   providers = {
+#     aws = aws.dr
+#   }
+# }
 
 # Capture all the outputs from the module instantiation above
-output "rds_with_backups_outputs" {
-  value = module.rds_with_backups
-}
+# output "rds_with_backups_outputs" {
+#   value = module.rds_with_backups
+# }
 
 #################################################################
 # Module stack
-
-# data "terraform_remote_state" "primary" {
-#   backend = "remote"
-
-#   config = {
-#     organization = "fhc-dan"
-#     workspaces = {
-#       name = "htest"
-#     }
-#   }
-# }
 
 # module "my_stack" {
 #   source = "../modules/my-stack"
@@ -55,8 +46,8 @@ output "rds_with_backups_outputs" {
 #     aws.shared = aws.primary
 #   }
 
-#   dr_enabled = local.dr_enabled
-#   dr_event = local.dr_event
+#   dr_enabled = true
+#   dr_event = true
 #   primary_remote_state = data.terraform_remote_state.primary.outputs
 # }
 
