@@ -94,7 +94,7 @@ resource "aws_cloudfront_distribution" "frontend" {
   enabled = true
   default_root_object = "index.html"
 
-  aliases = [data.aws_route53_zone.main.name]
+  aliases = [var.site_dns]
 
   price_class = "PriceClass_200"
 
