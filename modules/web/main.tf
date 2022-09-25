@@ -5,6 +5,8 @@ provider "aws" {
 
 variable "domain" {}
 
+variable "site_dns" {}
+
 data "aws_route53_zone" "main" {
   name = var.domain
 }
@@ -15,9 +17,9 @@ data "aws_route53_zone" "main" {
 resource "aws_acm_certificate" "main" {
   provider = aws.acm
 
-  domain_name = var.domain
+  domain_name = var.site_dns
   validation_method = "DNS"
-  subject_alternative_names = ["*.${var.domain}"]
+  subject_alternative_names = ["*.${var.site_dns}"]
 
   lifecycle {
     create_before_destroy = true

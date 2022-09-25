@@ -30,7 +30,8 @@ module "web" {
     aws = aws.dr
   }
 
-  domain = "dr.fhcdan.net"
+  domain = "fhcdan.net"
+  site_dns = "dr.fhcdan.net"
 
   # dr_remote_state = data.terraform_remote_state.dr.outputs
   # dr_enabled = false
