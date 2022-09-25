@@ -160,4 +160,3 @@ resource "aws_route53_record" "frontend" {
     evaluate_target_health = false
   }
 }
-

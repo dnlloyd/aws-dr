@@ -1,12 +1,13 @@
 provider "aws" {
+  alias = "primary"
+  region  = "us-east-1"
+}
+
+provider "aws" {
   alias = "dr"
   region  = "us-east-2"
 }
 
-provider "aws" {
-  alias = "primary"
-  region  = "us-east-1"
-}
 
 data "terraform_remote_state" "primary" {
   backend = "remote"
@@ -17,6 +18,23 @@ data "terraform_remote_state" "primary" {
       name = "htest"
     }
   }
+}
+
+#################################################################
+# Module Web: CloudFront and ALB
+
+module "web" {
+  source = "./modules/web"
+
+  providers = {
+    aws = aws.dr
+  }
+
+  domain = "dr.fhcdan.net"
+
+  # dr_remote_state = data.terraform_remote_state.dr.outputs
+  # dr_enabled = false
+  # dr_cutover = false
 }
 
 #################################################################
