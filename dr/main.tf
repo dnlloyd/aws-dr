@@ -24,7 +24,7 @@ data "terraform_remote_state" "primary" {
 # Module Web: CloudFront and ALB
 
 module "web" {
-  source = "./modules/web"
+  source = "../modules/web"
 
   providers = {
     aws = aws.dr
