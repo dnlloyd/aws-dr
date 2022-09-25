@@ -19,6 +19,8 @@ data "terraform_remote_state" "dr" {
 module "web" {
   source = "./modules/web"
 
+  domain = "fhcdan.net"
+
   # dr_remote_state = data.terraform_remote_state.dr.outputs
   # dr_enabled = false
   # dr_cutover = false
