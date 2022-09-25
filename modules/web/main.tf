@@ -17,9 +17,9 @@ data "aws_route53_zone" "main" {
 resource "aws_acm_certificate" "main" {
   provider = aws.acm
 
-  domain_name = var.site_dns
+  domain_name = var.domain
   validation_method = "DNS"
-  subject_alternative_names = ["*.${var.site_dns}"]
+  subject_alternative_names = ["*.${var.domain}"]
 
   lifecycle {
     create_before_destroy = true
@@ -45,7 +45,7 @@ resource "aws_route53_record" "acm_validation" {
 
 resource "aws_acm_certificate_validation" "main" {
   provider = aws.acm
-  
+
   certificate_arn = aws_acm_certificate.main.arn
   validation_record_fqdns = [for record in aws_route53_record.acm_validation : record.fqdn]
 }
